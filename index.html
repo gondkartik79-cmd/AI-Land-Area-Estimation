@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI-Based Land Area Estimation System</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 30px;
+            font-family: Arial, sans-serif;
+            background: #f2f6f9;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        h1 {
+            text-align: center;
+            color: #1d4d5f;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: #1d4d5f;
+        }
+
+        label {
+            display: block;
+            margin-top: 18px;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input[type="file"],
+        input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #aaa;
+            border-radius: 7px;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            margin-top: 25px;
+            background: #1d4d5f;
+            color: white;
+            border: none;
+            border-radius: 7px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #143946;
+        }
+
+        .pdf-button {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            margin-top: 15px;
+            background: #2e7d32;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 7px;
+            font-size: 18px;
+        }
+
+        .pdf-button:hover {
+            background: #1b5e20;
+        }
+
+        .image-box {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        .image-box img {
+            max-width: 100%;
+            max-height: 350px;
+            border-radius: 10px;
+            border: 2px solid #ddd;
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 25px;
+            background: #eef7f8;
+            border-left: 6px solid #1d4d5f;
+            border-radius: 8px;
+        }
+
+        .result p {
+            font-size: 17px;
+            margin: 12px 0;
+        }
+
+        .success {
+            margin-top: 20px;
+            padding: 12px;
+            background: #e8f5e9;
+            border-radius: 7px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 25px;
+            color: #777;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>AI-Based Land Area Estimation System</h1>
+
+    <!-- Upload and calculation form -->
+
+    <form action="/calculate" method="POST" enctype="multipart/form-data">
+
+        <label for="landImage">
+            Upload Land Image
+        </label>
+
+        <input
+            type="file"
+            id="landImage"
+            name="landImage"
+            accept="image/*"
+            required
+        >
+
+        <label for="length">
+            Reference Length (meters)
+        </label>
+
+        <input
+            type="number"
+            id="length"
+            name="length"
+            step="0.01"
+            min="0"
+            placeholder="Enter reference length"
+            value="{{ length if length else '' }}"
+            required
+        >
+
+        <label for="width">
+            Width (meters)
+        </label>
+
+        <input
+            type="number"
+            id="width"
+            name="width"
+            step="0.01"
+            min="0"
+            placeholder="Enter width"
+            value="{{ width if width else '' }}"
+            required
+        >
+
+        <button type="submit">
+            Calculate Area
+        </button>
+
+    </form>
+
+
+    <!-- Uploaded Image -->
+
+    {% if filename %}
+
+    <div class="image-box">
+
+        <h3>Uploaded Land Image</h3>
+
+        <img
+            src="{{ url_for('uploaded_file', filename=filename) }}"
+            alt="Land Image"
+        >
+
+    </div>
+
+    <div class="success">
+        Land image uploaded and processed successfully!
+    </div>
+
+    {% endif %}
+
+
+    <!-- Area Result -->
+
+    {% if area is defined %}
+
+    <div class="result">
+
+        <h2>Land Area Result</h2>
+
+        <p>
+            <strong>Reference Length:</strong>
+            {{ "%.2f"|format(length) }} meters
+        </p>
+
+        <p>
+            <strong>Width:</strong>
+            {{ "%.2f"|format(width) }} meters
+        </p>
+
+        <p>
+            <strong>Square Meter:</strong>
+            {{ "%.2f"|format(area) }} m²
+        </p>
+
+        <p>
+            <strong>Acre:</strong>
+            {{ "%.4f"|format(acre) }} acre
+        </p>
+
+        <p>
+            <strong>Guntha:</strong>
+            {{ "%.2f"|format(guntha) }} guntha
+        </p>
+
+        <p>
+            <strong>Hectare:</strong>
+            {{ "%.4f"|format(hectare) }} hectare
+        </p>
+
+    </div>
+
+
+    <!-- PDF Download -->
+
+    <a
+        class="pdf-button"
+        href="/download_report?length={{ length }}&width={{ width }}"
+    >
+        Download PDF Report
+    </a>
+
+    {% endif %}
+
+
+    <div class="footer">
+        AI-Based Land Area Estimation System
+    </div>
+
+</div>
+
+</body>
+
+</html>
